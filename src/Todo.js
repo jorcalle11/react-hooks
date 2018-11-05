@@ -12,7 +12,7 @@ export default function Todo() {
       <TodoList
         tasks={tasks}
         onRemoveTask={removeTask}
-        onCompleteTask={toggleTask}
+        onToggleTask={toggleTask}
       />
       <TodoForm onAdd={addTask} />
     </>
