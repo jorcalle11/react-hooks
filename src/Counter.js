@@ -36,26 +36,19 @@ export default function Counter() {
 
   return (
     <div>
-      <div>
+      <div style={{ marginBottom: 5 }}>
         <label htmlFor="increment">Set increment: </label>
         <input
           id="increment"
           type="number"
+          min={1}
           value={increment}
           onChange={handleIncrementChange}
         />
-      </div>
-      <p>
-        Count <b>{count}</b>
-      </p>
-      <p>
+        <button onClick={handleOnCount}>Count {count}</button>
         <button onClick={reset}>Reset</button>
-        <HistoryList
-          history={history}
-          onSelectHistoryItem={selectHistoryItem}
-        />
-      </p>
-      <button onClick={handleOnCount}>Count {increment}</button>
+      </div>
+      <HistoryList history={history} onSelectHistoryItem={selectHistoryItem} />
     </div>
   );
 }
