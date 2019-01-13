@@ -4,7 +4,7 @@ function reducer(currentState, newState) {
   return { ...currentState, ...newState };
 }
 
-export default function StopWatch() {
+function useStopWatch() {
   const [{ lapse, running }, setState] = useReducer(reducer, {
     lapse: 0,
     running: false
@@ -35,11 +35,36 @@ export default function StopWatch() {
     setState({ lapse: 0, running: false });
   }
 
+  return { handleClearClick, handleRunClick, lapse, running };
+}
+
+export default function StopWatch() {
+  const stopWatchOne = useStopWatch();
+  const stopWatchTwo = useStopWatch();
+
   return (
     <>
-      <label style={{ display: 'block', fontSize: '2em' }}>{lapse} ms</label>
-      <button onClick={handleRunClick}>{running ? 'Stop' : 'Start'}</button>
-      <button onClick={handleClearClick}>Clear</button>
+      <label style={{ display: 'block', fontSize: '2em' }}>
+        {stopWatchOne.lapse} ms
+      </label>
+      <button onClick={stopWatchOne.handleRunClick}>
+        {stopWatchOne.running ? 'Stop' : 'Start'}
+      </button>
+      <button onClick={stopWatchOne.handleClearClick}>Clear</button>
+      <hr />
+      <strong>Lapse Difference:</strong>
+      <span>
+        {stopWatchOne.lapse - stopWatchTwo.lapse}
+        ms
+      </span>
+      <hr />
+      <label style={{ display: 'block', fontSize: '2em' }}>
+        {stopWatchTwo.lapse} ms
+      </label>
+      <button onClick={stopWatchTwo.handleRunClick}>
+        {stopWatchTwo.running ? 'Stop' : 'Start'}
+      </button>
+      <button onClick={stopWatchTwo.handleClearClick}>Clear</button>
     </>
   );
 }
