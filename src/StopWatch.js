@@ -1,30 +1,11 @@
 import React, { useRef, useEffect, useReducer } from 'react';
 
-function reducer(state, action) {
-  switch (action.type) {
-    case 'LAPSE':
-      return {
-        ...state,
-        lapse: action.now - action.startTime
-      };
-    case 'TOGGLE_RUNNING':
-      return {
-        ...state,
-        running: !state.running
-      };
-    case 'CLEAR':
-      return {
-        ...state,
-        lapse: 0,
-        running: false
-      };
-    default:
-      return state;
-  }
+function reducer(currentState, newState) {
+  return { ...currentState, ...newState };
 }
 
 export default function StopWatch() {
-  const [{ lapse, running }, dispatch] = useReducer(reducer, {
+  const [{ lapse, running }, setState] = useReducer(reducer, {
     lapse: 0,
     running: false
   });
@@ -42,16 +23,16 @@ export default function StopWatch() {
     } else {
       const startTime = Date.now() - lapse;
       intervalRef.current = setInterval(() => {
-        dispatch({ type: 'LAPSE', now: Date.now(), startTime });
+        setState({ lapse: Date.now() - startTime });
       }, 0);
     }
 
-    dispatch({ type: 'TOGGLE_RUNNING' });
+    setState({ running: !running });
   }
 
   function handleClearClick() {
     clearInterval(intervalRef.current);
-    dispatch({ type: 'CLEAR' });
+    setState({ lapse: 0, running: false });
   }
 
   return (
