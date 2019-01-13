@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-function useCounter({ initialCount = 0, initialStep = 1 } = {}) {
+import CounterHistory from './CounterHistory';
+
+function useCounter({ initialCount, initialStep, initialHistory } = {}) {
   const [count, setCount] = useState(initialCount);
   const [step, setStep] = useState(initialStep);
-  const [history, setHistory] = useState([]);
+  const [history, setHistory] = useState(initialHistory);
   const setIncrement = value => setStep(value);
 
   const increment = () => {
@@ -35,6 +37,20 @@ function useCounter({ initialCount = 0, initialStep = 1 } = {}) {
   };
 }
 
+function setInitialValues() {
+  const initialCount = () => Number(window.localStorage.getItem('count') || 0);
+  const initialStep = () => Number(window.localStorage.getItem('step') || 1);
+  const history = () => {
+    return JSON.parse(window.localStorage.getItem('history') || '[]');
+  };
+
+  return {
+    initialCount,
+    initialStep,
+    initialHistory: history
+  };
+}
+
 export default function Counter() {
   const {
     count,
@@ -44,8 +60,29 @@ export default function Counter() {
     setIncrement,
     selectHistoryItem,
     history
-  } = useCounter();
+  } = useCounter(setInitialValues());
   const handleOnChangeStep = e => setIncrement(+e.target.value);
+
+  useEffect(
+    () => {
+      window.localStorage.setItem('count', count);
+    },
+    [count]
+  );
+
+  useEffect(
+    () => {
+      window.localStorage.setItem('step', step);
+    },
+    [step]
+  );
+
+  useEffect(
+    () => {
+      window.localStorage.setItem('history', JSON.stringify(history));
+    },
+    [history]
+  );
 
   return (
     <div>
@@ -64,24 +101,12 @@ export default function Counter() {
       {history.length ? (
         <div>
           History:
-          <HistoryList
+          <CounterHistory
             history={history}
             onSelectHistoryItem={selectHistoryItem}
           />
         </div>
       ) : null}
     </div>
-  );
-}
-
-function HistoryList({ history, onSelectHistoryItem }) {
-  return (
-    <>
-      {history.map(h => (
-        <button key={h} onClick={() => onSelectHistoryItem(h)}>
-          {h}
-        </button>
-      ))}
-    </>
   );
 }
