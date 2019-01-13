@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "lodash": "^4.17.11",
     "react": "^16.7.0-alpha",
     "react-dom": "^16.7.0-alpha",
     "react-scripts": "2.1.1"
@@ -21,5 +22,8 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "devDependencies": {
+    "react-testing-library": "^5.4.4"
+  }
 }
