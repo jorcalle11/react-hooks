@@ -37,6 +37,7 @@ function useCounter({ initialCount, initialStep, initialHistory } = {}) {
   };
 }
 
+// performance issue: every single time that the render method runs, we're going to be reading into localStorage.
 function setInitialValues() {
   const initialCount = () => Number(window.localStorage.getItem('count') || 0);
   const initialStep = () => Number(window.localStorage.getItem('step') || 1);
@@ -52,6 +53,7 @@ function setInitialValues() {
 }
 
 export default function Counter() {
+  // fix performance issue: if we will pass it a function to the useState, it will only call it on the first render.
   const {
     count,
     increment,
@@ -63,6 +65,8 @@ export default function Counter() {
   } = useCounter(setInitialValues());
   const handleOnChangeStep = e => setIncrement(+e.target.value);
 
+  // the euseEffect callback is going to be called after every single time our component rerenders.
+  // if we will pass the second params [count], React will only run our callback when the count value changes.
   useEffect(
     () => {
       window.localStorage.setItem('count', count);
