@@ -1,38 +1,51 @@
 import React, { useState } from 'react';
 
-function useCounter() {
-  const [count, setCount] = useState(0);
+function useCounter({ initialCount = 0, initialStep = 1 } = {}) {
+  const [count, setCount] = useState(initialCount);
+  const [step, setStep] = useState(initialStep);
   const [history, setHistory] = useState([]);
+  const setIncrement = value => setStep(value);
 
-  const selectHistoryItem = index => {
-    setHistory(history.slice(0, index + 1));
-    setCount(history[index]);
-  };
-
-  const handleSetCount = value => {
-    setHistory(history.concat(value));
+  const increment = () => {
+    const value = count + step;
     setCount(value);
+    setHistory([...history, value]);
   };
 
   const reset = () => {
     setHistory([]);
     setCount(0);
+    setStep(1);
+  };
+
+  const selectHistoryItem = currentCount => {
+    const index = history.findIndex(h => h === currentCount);
+    setHistory(history.slice(0, index + 1));
+    setCount(currentCount);
   };
 
   return {
     count,
-    setCount: handleSetCount,
-    history,
+    increment,
+    reset,
+    setIncrement,
     selectHistoryItem,
-    reset
+    step,
+    history
   };
 }
 
 export default function Counter() {
-  const [increment, setIncrement] = useState(1);
-  const { count, setCount, history, reset, selectHistoryItem } = useCounter();
-  const handleOnCount = () => setCount(count + increment);
-  const handleIncrementChange = e => setIncrement(+e.target.value);
+  const {
+    count,
+    increment,
+    reset,
+    step,
+    setIncrement,
+    selectHistoryItem,
+    history
+  } = useCounter();
+  const handleOnChangeStep = e => setIncrement(+e.target.value);
 
   return (
     <div>
@@ -42,13 +55,21 @@ export default function Counter() {
           id="increment"
           type="number"
           min={1}
-          value={increment}
-          onChange={handleIncrementChange}
+          value={step}
+          onChange={handleOnChangeStep}
         />
-        <button onClick={handleOnCount}>Count {count}</button>
+        <button onClick={increment}>Count {count}</button>
         <button onClick={reset}>Reset</button>
       </div>
-      <HistoryList history={history} onSelectHistoryItem={selectHistoryItem} />
+      {history.length ? (
+        <div>
+          History:
+          <HistoryList
+            history={history}
+            onSelectHistoryItem={selectHistoryItem}
+          />
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -56,8 +77,8 @@ export default function Counter() {
 function HistoryList({ history, onSelectHistoryItem }) {
   return (
     <>
-      {history.map((h, index) => (
-        <button key={h} onClick={() => onSelectHistoryItem(index)}>
+      {history.map(h => (
+        <button key={h} onClick={() => onSelectHistoryItem(h)}>
           {h}
         </button>
       ))}
