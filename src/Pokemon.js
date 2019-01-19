@@ -1,6 +1,6 @@
 import React, { useState, Suspense } from 'react';
+import { unstable_createResource as createResource } from 'react-cache';
 
-const cache = {};
 const myPokemon = createResource(fetchPokemon);
 
 function PokemonInfo({ pokemonName }) {
@@ -33,22 +33,6 @@ export default function PokemonApp() {
       ) : null}
     </div>
   );
-}
-
-function createResource(fn) {
-  return {
-    read(id) {
-      const data = cache[id];
-      if (!data) {
-        const promise = fn(id).then(p => (cache[id] = p));
-
-        // When we throw this promise, React will catch that promise and find the closest Suspense component and use its fallback to render that instead until the Pokémon has been loaded.
-        // When this promise resolves, then Suspense is going to re-render its children.
-        throw promise;
-      }
-      return data;
-    }
-  };
 }
 
 function fetchPokemon(name) {
