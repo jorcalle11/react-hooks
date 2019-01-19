@@ -9,7 +9,7 @@ const Counter = React.lazy(() => import('./Counter'));
 const StopWatch = React.lazy(() => import('./StopWatch'));
 const Todo = React.lazy(() => import('./Todo'));
 const Greeting = React.lazy(() => import('./Gretting'));
-// const Users = React.lazy(() => import('./Users'));
+const Pokemon = React.lazy(() => import('./Pokemon'));
 
 export default function App() {
   return (
@@ -29,6 +29,9 @@ export default function App() {
             <li>
               <Link to="/greeting">Greeting</Link>
             </li>
+            <li>
+              <Link to="/pokemon">Pokemon</Link>
+            </li>
           </ul>
         </nav>
         <Suspense fallback={<div>Loading...</div>}>
@@ -37,6 +40,7 @@ export default function App() {
             <Route path="/stop-watch" component={StopWatch} />
             <Route path="/todo" component={Todo} />
             <Route path="/greeting" component={Greeting} />
+            <Route path="/pokemon" component={Pokemon} />
             <Redirect from="/" to="/counter" />
           </Switch>
         </Suspense>
